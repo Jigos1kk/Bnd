@@ -1,0 +1,6 @@
+.env*
+
+Dockerfile
+
+docker-compose*.yaml
+docker-compose*.yml
