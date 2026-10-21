@@ -1,25 +1,16 @@
-import { createServer } from "node:http"
-import { Server } from "socket.io"
-import "dotenv/config"
+import { env } from "./config/env.js";
+import { Database } from "./database/Database.js";
+import { SocketServer } from "./socket/SocketServer.js";
 
-const http = createServer()
-const PORT = process.env.PORT || 21024;
-const io = new Server(http, {
-    cors: {
-        origin: "*"
-    }
+async function bootstrap(): Promise<void> {
+  const db = new Database(env.dbUrl, env.dbOptions);
+  await db.connect();
+
+  const socketServer = new SocketServer(db);
+  socketServer.start(env.port);
+}
+
+bootstrap().catch((error) => {
+  console.error("Failed to start server:", error);
+  process.exit(1);
 });
-
-io.on("connection", (socket) => {
-  console.log("Пользователь подключился:", socket.id);
-
-  socket.on("ping", () => {
-    console.log(123);
-    
-    socket.emit("pong", "Ping Pong!")
-  })
-});
-
-http.listen(PORT, () => {
-    console.log(`Server started! ${PORT}`);
-})

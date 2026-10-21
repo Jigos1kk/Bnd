@@ -1,10 +1,14 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { CryptoService, type StoredKeys } from '../services/Crypto.service'
+import { io } from 'socket.io-client';
+import sodium from 'libsodium-wrappers-sumo'
 
 type CryptoContextValue = {
     keys: StoredKeys
     service: CryptoService
 }
+
+const socket = io('http://localhost:21024');
 
 const CryptoContext = createContext<CryptoContextValue | null>(null)
 
@@ -32,7 +36,10 @@ export function CryptoProvider({ children }: { children: ReactNode }) {
         getSessionKeys()
             .then((sessionKeys) => {
                 if (cancelled) return
-
+                socket.emit("identity_device", {
+                    identityPublicKey: sodium.to_base64(sessionKeys.identity.identityKey.publicKey),
+                    signedPreKey: sodium.to_base64(sessionKeys.signedPreKey.keyPair.publicKey)
+                })
                 setKeys(sessionKeys)
             })
             .catch((error) => {

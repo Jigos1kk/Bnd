@@ -11,8 +11,8 @@ export function AuthPage() {
                 <div className="
                     flex justify-center
                 ">
-                    <div className="w-125 h-screen py-3 flex items-center">
-                        <div className="p-5 grid gap-7">
+                    <div className="w-100 h-screen py-3 flex items-center">
+                        <div className="p-5 grid gap-7 w-full">
                             <div className="font-medium text-3xl w-3/4">Вход</div>
                             <IMaskInput 
                                 className="
